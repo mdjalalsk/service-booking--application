@@ -58,7 +58,7 @@ const routes = createBrowserRouter([
       },
       {
         path: 'orders',
-        element: <TrackOrder />,
+        element: <PrivateRoute><TrackOrder /></PrivateRoute>,
       },
     ],
   },

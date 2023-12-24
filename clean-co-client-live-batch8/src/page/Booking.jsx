@@ -2,12 +2,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import Container from '../components/ui/Container';
 import useAuth from '../hooks/useAuth';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams} from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
+import toast from 'react-hot-toast';
 
 
 const Booking = () => {
+  const navigate=useNavigate();
 const axios=useAxios();
   const { user } = useAuth();
   const [customerName, setCustomerName] = useState('');
@@ -19,7 +21,7 @@ const axios=useAxios();
   //userParams is dynamic id for which service select booking
   const {id}=useParams();
   console.log(id);
-  const {data:service}=useQuery({
+  const {data:service,isLoading}=useQuery({
     queryKey:'booking',
     queryFn:async()=>{
     const res=await axios.get(`/services/${id}`)
@@ -28,11 +30,17 @@ const axios=useAxios();
 })
 console.log(service);
 const serviceName=service?.data.title;
+const servicePrice=service?.data.price;
+
 const {mutate}=useMutation({
   mutationKey:'booking',
   mutationFn:(bookingData)=>{
     return axios.post('/create-bookings',bookingData)
   },
+  onSuccess:()=>{
+    toast.success("Booking successfully")
+    navigate('/services');
+  }
 })
 
   // i used mutaion instad of handleSubmit 
@@ -44,6 +52,8 @@ const {mutate}=useMutation({
   // };
 
   return (
+    isLoading?<div className='text-center' ><span className="loading loading-ring loading-lg "></span>
+    </div>:
     <Container className="my-40">
       <div className="flex">
         <div className="flex-1 flex flex-col justify-between">
@@ -125,7 +135,7 @@ const {mutate}=useMutation({
             </div>
 
             <div className="form-control mt-2">
-              <button type='button' className="btn btn-primary" onClick={()=>mutate({customerName,email,date,timeSlot,address,serviceName,status:'pending'})}>Book</button>
+              <button type='button' className="btn btn-primary" onClick={()=>mutate({customerName,email,date,timeSlot,address,servicePrice,serviceName,status:'pending'})}>Book</button>
             </div>
           </form>
         </div>

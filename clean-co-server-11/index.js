@@ -146,8 +146,9 @@ async function run() {
       res.send(result);
     });
 
-    // GET SINGLE BOOKINGS
-    app.get('/api/v1/bookings', verifyToken, async (req, res) => {
+    // GET  SINGLE USER ALL BOOKINGS 
+    // http://localhost:5000/api/v1/user/bookings?email=hridoy@gmail.com
+    app.get('/api/v1/user/bookings',verifyToken,async (req, res) => {
       const userEmail = req.query.email;
 
       if (userEmail !== req.user.email) {
